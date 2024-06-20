@@ -39,6 +39,9 @@ $ npm run start:dev
 Auth route not working from documentation. 
 For auth use directly this url:  http://localhost:3000/auth
 
+After successful auth, this API will automatically set the cookie,
+which you will use in the next requests.
+
 Documentation URL:  http://localhost:3000/documentation
 ```
 

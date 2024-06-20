@@ -2,6 +2,7 @@ import { IsEmail, IsEnum, IsNotEmpty, IsString } from '@nestjs/class-validator';
 import { AbstractDto } from '../../../common/abstract.dto';
 import { UserTypeEnum } from '../../../constants';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../user.schema';
 
 export class UserDto extends AbstractDto {
   @IsNotEmpty()
@@ -19,7 +20,7 @@ export class UserDto extends AbstractDto {
   @ApiProperty()
   type: UserTypeEnum;
 
-  constructor(userEntity) {
+  constructor(userEntity: User) {
     super(userEntity);
 
     this.fullName = userEntity.fullName;

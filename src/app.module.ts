@@ -6,10 +6,12 @@ import { AuthModule } from './modules/auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ApiConfigService } from './shared/services/api-config.service';
 import { UserModule } from './modules/user/user.module';
+import { EventModule } from './modules/event/event.module';
 
 @Module({
   imports: [
     AuthModule,
+    EventModule,
     UserModule,
     SharedModule,
     ConfigModule.forRoot({

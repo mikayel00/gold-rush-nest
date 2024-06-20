@@ -5,10 +5,10 @@ import { UserTypeEnum } from '../../constants';
 export type UserDocument = User & mongoose.Document;
 @Schema({ timestamps: true })
 export class User {
-  @Prop({ required: true })
+  @Prop({ required: true, type: String })
   fullName: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: String })
   email: string;
 
   @Prop({ required: true, type: String, enum: UserTypeEnum })
