@@ -12,7 +12,7 @@ import {
 import { JwtAuthGuard } from '../../guards/jwt-auth-guard';
 import { EventDto } from './dto/event.dto';
 import { EventService } from './event.service';
-import { GetEventOptionsDto } from './dto/get-event-options.dto';
+import { EventOptionsDto } from './dto/event-options.dto';
 import { CreateEventDto } from './dto/create-event.dto';
 
 @ApiTags('event')
@@ -26,10 +26,8 @@ export class EventController {
   @ApiOkResponse({
     description: 'Get current event',
   })
-  getByStatus(
-    @Query() getEventOptionsDto: GetEventOptionsDto,
-  ): Promise<EventDto> {
-    return this.eventService.getByStatus(getEventOptionsDto);
+  getByStatus(@Query() eventOptionsDto: EventOptionsDto): Promise<EventDto> {
+    return this.eventService.getByStatus(eventOptionsDto);
   }
 
   @Post()

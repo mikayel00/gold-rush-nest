@@ -39,12 +39,14 @@ export class AuthController {
   ): Promise<void> {
     const tokenDto = await this.authService.validate(req.user as AuthUserDto);
 
+    const ONE_DAY = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
     res
       .cookie('access_token', tokenDto.token, {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        expires: new Date(Date.now() + 24 * 60 * 1000),
+        expires: ONE_DAY,
       })
       .send({ status: 'ok' });
   }

@@ -1,12 +1,17 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { Request } from 'express';
+import { UserService } from '../../user/user.service';
+import { UserDto } from '../../user/dto/user.dto';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ApiConfigService) {
+  constructor(
+    private readonly configService: ApiConfigService,
+    private readonly userService: UserService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         JwtStrategy.extractJWTFromCookie,
@@ -22,7 +27,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return null;
   }
 
-  async validate(payload: any) {
-    return { ...payload.user };
+  async validate(data: { email: string }): Promise<UserDto> {
+    const user = await this.userService.getOneByEmail(data.email);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user;
   }
 }

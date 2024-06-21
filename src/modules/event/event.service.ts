@@ -3,7 +3,7 @@ import { EventDocument } from './event.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { EventDto } from './dto/event.dto';
-import { GetEventOptionsDto } from './dto/get-event-options.dto';
+import { EventOptionsDto } from './dto/event-options.dto';
 import { EventNotFoundException } from './exceptions/event-not-found.exception';
 import { CreateEventDto } from './dto/create-event.dto';
 
@@ -14,10 +14,10 @@ export class EventService {
   ) {}
 
   async getByStatus(
-    getEventOptionsDto: GetEventOptionsDto,
+    eventOptionsDto: EventOptionsDto,
   ): Promise<EventDto | null> {
     const eventEntity = await this.eventModel
-      .findOne({ status: getEventOptionsDto.status })
+      .findOne({ status: eventOptionsDto.status })
       .exec();
 
     if (!eventEntity) {
