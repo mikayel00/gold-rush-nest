@@ -8,10 +8,12 @@ import { ApiConfigService } from './shared/services/api-config.service';
 import { UserModule } from './modules/user/user.module';
 import { EventModule } from './modules/event/event.module';
 import { ReporterModule } from './modules/report/report.module';
+import { BucketModule } from './modules/bucket/bucket.module';
 
 @Module({
   imports: [
     AuthModule,
+    BucketModule,
     EventModule,
     ReporterModule,
     UserModule,

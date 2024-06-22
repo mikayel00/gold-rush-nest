@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserTypeEnum } from '../../constants';
-import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,16 +11,17 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async getOneByEmail(email: string): Promise<UserDto | null> {
+  async getOneByEmail(email: string): Promise<UserDocument | null> {
     const userEntity = await this.userModel.findOne({ email: email }).exec();
 
     if (!userEntity) {
       return null;
     }
-    return new UserDto(userEntity);
+
+    return userEntity;
   }
 
-  async create(data: CreateUserDto): Promise<UserDto> {
+  async create(data: CreateUserDto): Promise<UserDocument> {
     const user = {
       ...data,
       type: this.getRandomUserType(),
@@ -29,7 +29,7 @@ export class UserService {
     const createdUser = new this.userModel(user);
     await createdUser.save();
 
-    return new UserDto(createdUser);
+    return createdUser;
   }
 
   private getRandomUserType(): UserTypeEnum {

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { JwtTokenService } from './jwt-token.service';
@@ -13,7 +13,7 @@ export class AuthService {
 
   async validate(user: AuthUserDto): Promise<TokenDto> {
     if (!user) {
-      throw new BadRequestException('Unauthenticated');
+      throw new UnauthorizedException();
     }
 
     let registeredUser = await this.userService.getOneByEmail(user.email);

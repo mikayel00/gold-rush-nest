@@ -23,12 +23,12 @@ export class ReportController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
-    description: 'Update or insert report by EventId',
+    description: 'Report by EventId',
   })
-  upsert(
+  report(
     @AuthUser() userDto: UserDto,
     @Body() reportOptionsDto: ReportOptionsDto,
   ): Promise<ReportDto> {
-    return this.reportService.upsert(reportOptionsDto, userDto.email);
+    return this.reportService.report(reportOptionsDto, userDto.email);
   }
 }

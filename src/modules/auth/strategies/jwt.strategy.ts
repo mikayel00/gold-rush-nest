@@ -4,7 +4,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ApiConfigService } from '../../../shared/services/api-config.service';
 import { Request } from 'express';
 import { UserService } from '../../user/user.service';
-import { UserDto } from '../../user/dto/user.dto';
+import { UserDocument } from '../../user/user.schema';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -27,7 +27,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return null;
   }
 
-  async validate(data: { email: string }): Promise<UserDto> {
+  async validate(data: { email: string }): Promise<UserDocument> {
     const user = await this.userService.getOneByEmail(data.email);
 
     if (!user) {
