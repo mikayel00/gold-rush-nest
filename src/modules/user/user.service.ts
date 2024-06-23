@@ -38,7 +38,7 @@ export class UserService {
     return userTypes[randomIndex];
   }
 
-  async addPoints(email: string, points: number) {
+  async addPoints(email: string, points: number): Promise<void> {
     await this.userModel
       .findOneAndUpdate({ email: email }, { points: points })
       .exec();

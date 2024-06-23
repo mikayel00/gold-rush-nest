@@ -82,7 +82,7 @@ export class ReportService {
     return report;
   }
 
-  async deleteById(id: string) {
+  async deleteById(id: string): Promise<void> {
     await this.reportModel.findByIdAndDelete(id);
   }
 }

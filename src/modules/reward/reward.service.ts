@@ -58,7 +58,10 @@ export class RewardService {
     return new ReportDto(reportEntity, { reward: 200 - (scoreIndex + 1) });
   }
 
-  async claimReward(rewardOptionsDto: RewardOptionsDto, userDto: UserDto) {
+  async claimReward(
+    rewardOptionsDto: RewardOptionsDto,
+    userDto: UserDto,
+  ): Promise<ReportDto> {
     const reward = await this.getReward(rewardOptionsDto, userDto);
 
     if (!reward) {
