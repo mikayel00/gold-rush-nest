@@ -16,5 +16,6 @@ import { BucketModule } from '../bucket/bucket.module';
   ],
   controllers: [ReportController],
   providers: [ReportService],
+  exports: [ReportService],
 })
-export class ReporterModule {}
+export class ReportModule {}

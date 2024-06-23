@@ -1,4 +1,9 @@
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -26,6 +31,9 @@ export class EventController {
   @ApiOkResponse({
     description: 'Get current event',
   })
+  @ApiOperation({
+    summary: 'Get event by status',
+  })
   getByStatus(@Query() eventOptionsDto: EventOptionsDto): Promise<EventDto> {
     return this.eventService.getByStatus(eventOptionsDto);
   }
@@ -34,7 +42,10 @@ export class EventController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({
-    description: 'Create event',
+    description: 'Create event, use UTC time for start and end dates',
+  })
+  @ApiOperation({
+    summary: 'Create event',
   })
   create(@Body() createEventDto: CreateEventDto): Promise<EventDto> {
     return this.eventService.create(createEventDto);

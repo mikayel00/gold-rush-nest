@@ -17,6 +17,9 @@ export class User {
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bucket' }] })
   buckets: Bucket[];
+
+  @Prop({ required: true, type: Number, default: 0 })
+  points: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

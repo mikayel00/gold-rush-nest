@@ -1,7 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { ApiConfigService } from './services/api-config.service';
+import { UtilsService } from './services/utils.service';
 
-const providers = [ApiConfigService];
+const providers = [ApiConfigService, UtilsService];
 
 @Global()
 @Module({

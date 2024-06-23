@@ -8,6 +8,10 @@ import { UserService } from '../user/user.service';
 import { EventService } from '../event/event.service';
 import { EventStatusEnum } from '../../constants';
 import { BucketService } from '../bucket/bucket.service';
+import { RewardOptionsDto } from '../reward/dto/reward-options.dto';
+import { UserDto } from '../user/dto/user.dto';
+import { ReportNotFoundException } from './exceptions/report-not-found.exception';
+import { EventDocument } from '../event/event.schema';
 
 @Injectable()
 export class ReportService {
@@ -23,11 +27,9 @@ export class ReportService {
     reportOptionsDto: ReportOptionsDto,
     userEmail: string,
   ): Promise<ReportDto> {
-    const eventDto = await this.eventService.getByStatus({
-      status: EventStatusEnum.ACTIVE,
-    });
+    const eventDto = await this.eventService.getById(reportOptionsDto.eventId);
 
-    if (eventDto.id !== reportOptionsDto.eventId) {
+    if (eventDto.status !== EventStatusEnum.ACTIVE) {
       return;
     }
 
@@ -38,26 +40,49 @@ export class ReportService {
       user,
     );
 
-    console.log(availableBucket);
+    const report = await this.upsert(reportOptionsDto, userEmail, eventDto);
 
-    return this.upsert(reportOptionsDto, userEmail);
+    await this.bucketService.addReportToBucket(availableBucket, report);
+
+    return new ReportDto(report);
   }
 
   private async upsert(
     reportOptionsDto: ReportOptionsDto,
     userEmail: string,
-  ): Promise<ReportDto> {
-    const reportEntity = await this.reportModel
+    event: EventDocument,
+  ): Promise<ReportDocument> {
+    return this.reportModel
       .findOneAndUpdate(
         {
           eventId: reportOptionsDto.eventId,
           userEmail: userEmail,
         },
-        { score: reportOptionsDto.score },
+        { score: reportOptionsDto.score, eventId: event.id },
         { new: true, upsert: true },
       )
       .exec();
+  }
 
-    return new ReportDto(reportEntity);
+  async getByEventId(
+    rewardOptionsDto: RewardOptionsDto,
+    userDto: UserDto,
+  ): Promise<ReportDocument> {
+    const report = await this.reportModel
+      .findOne({
+        eventId: rewardOptionsDto.eventId,
+        userEmail: userDto.email,
+      })
+      .exec();
+
+    if (!report) {
+      throw new ReportNotFoundException();
+    }
+
+    return report;
+  }
+
+  async deleteById(id: string) {
+    await this.reportModel.findByIdAndDelete(id);
   }
 }

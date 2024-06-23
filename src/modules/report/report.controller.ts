@@ -1,4 +1,4 @@
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -23,7 +23,10 @@ export class ReportController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
-    description: 'Report by EventId',
+    description: 'Report by eventId',
+  })
+  @ApiOperation({
+    summary: 'Report score by eventId',
   })
   report(
     @AuthUser() userDto: UserDto,

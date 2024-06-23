@@ -37,4 +37,10 @@ export class UserService {
     const randomIndex = Math.floor(Math.random() * userTypes.length);
     return userTypes[randomIndex];
   }
+
+  async addPoints(email: string, points: number) {
+    await this.userModel
+      .findOneAndUpdate({ email: email }, { points: points })
+      .exec();
+  }
 }
