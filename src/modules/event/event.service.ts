@@ -18,26 +18,24 @@ export class EventService {
     private readonly utilsService: UtilsService,
   ) {}
 
-  async getByStatus(
-    eventOptionsDto: EventOptionsDto,
-  ): Promise<EventDto | null> {
-    const eventEntity = await this.eventModel
+  async getByStatus(eventOptionsDto: EventOptionsDto): Promise<EventDto> {
+    const event = await this.eventModel
       .findOne({ status: eventOptionsDto.status })
       .exec();
 
-    if (!eventEntity) {
+    if (!event) {
       throw new EventNotFoundException();
     }
-    return new EventDto(eventEntity);
+    return new EventDto(event);
   }
 
   async getById(eventId: string): Promise<EventDocument | null> {
-    const eventEntity = await this.eventModel.findById(eventId).exec();
+    const event = await this.eventModel.findById(eventId).exec();
 
-    if (!eventEntity) {
+    if (!event) {
       throw new EventNotFoundException();
     }
-    return eventEntity;
+    return event;
   }
 
   async create(data: CreateEventDto): Promise<EventDto> {

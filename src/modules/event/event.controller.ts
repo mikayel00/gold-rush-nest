@@ -11,14 +11,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../guards/jwt-auth-guard';
 import { EventDto } from './dto/event.dto';
 import { EventService } from './event.service';
-import { EventOptionsDto } from './dto/event-options.dto';
 import { CreateEventDto } from './dto/create-event.dto';
+import { EventStatusEnum } from '../../constants';
 
 @ApiTags('event')
 @Controller('event')
@@ -32,10 +31,10 @@ export class EventController {
     description: 'Get current event',
   })
   @ApiOperation({
-    summary: 'Get event by status',
+    summary: 'Get current event',
   })
-  getByStatus(@Query() eventOptionsDto: EventOptionsDto): Promise<EventDto> {
-    return this.eventService.getByStatus(eventOptionsDto);
+  getCurrent(): Promise<EventDto> {
+    return this.eventService.getByStatus({ status: EventStatusEnum.ACTIVE });
   }
 
   @Post()

@@ -24,10 +24,10 @@ export class RewardController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
-    description: 'Get finished event reward',
+    description: 'Get finished event reward details',
   })
   @ApiOperation({
-    summary: 'Get finished event reward',
+    summary: 'Get finished event reward details',
   })
   getReward(
     @Query() rewardOptionsDto: RewardOptionsDto,

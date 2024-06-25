@@ -11,7 +11,6 @@ import { BucketService } from '../bucket/bucket.service';
 import { RewardOptionsDto } from '../reward/dto/reward-options.dto';
 import { UserDto } from '../user/dto/user.dto';
 import { ReportNotFoundException } from './exceptions/report-not-found.exception';
-import { EventDocument } from '../event/event.schema';
 
 @Injectable()
 export class ReportService {
@@ -27,22 +26,19 @@ export class ReportService {
     reportOptionsDto: ReportOptionsDto,
     userEmail: string,
   ): Promise<ReportDto> {
-    const eventDto = await this.eventService.getById(reportOptionsDto.eventId);
+    const event = await this.eventService.getById(reportOptionsDto.eventId);
 
-    if (eventDto.status !== EventStatusEnum.ACTIVE) {
+    if (event.status !== EventStatusEnum.ACTIVE) {
       return;
     }
 
     const user = await this.userService.getOneByEmail(userEmail);
 
-    const availableBucket = await this.bucketService.getAvailable(
-      eventDto,
-      user,
-    );
+    const availableBucket = await this.bucketService.getAvailable(event, user);
 
-    const report = await this.upsert(reportOptionsDto, userEmail, eventDto);
+    const report = await this.upsert(reportOptionsDto, userEmail);
 
-    await this.bucketService.addReportToBucket(availableBucket, report);
+    await this.bucketService.addReportToBucket(availableBucket, report, event);
 
     return new ReportDto(report);
   }
@@ -50,7 +46,6 @@ export class ReportService {
   private async upsert(
     reportOptionsDto: ReportOptionsDto,
     userEmail: string,
-    event: EventDocument,
   ): Promise<ReportDocument> {
     return this.reportModel
       .findOneAndUpdate(
@@ -58,7 +53,7 @@ export class ReportService {
           eventId: reportOptionsDto.eventId,
           userEmail: userEmail,
         },
-        { score: reportOptionsDto.score, eventId: event.id },
+        { score: reportOptionsDto.score, eventId: reportOptionsDto.eventId },
         { new: true, upsert: true },
       )
       .exec();

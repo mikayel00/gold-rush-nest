@@ -4,7 +4,7 @@
 *“Gold Rush” is an in game event that allows for some competitive play. It begins at a specified time and concludes after a designated period. During that period players are added into so-called temporary buckets of 200 people, where they compete together for rewards. Players collect gold by tapping on gold nuggets in the game. The more you tap, the more gold you collect. Every 15 seconds the client will report to the backend endpoint the total number of gold collected. The leaderboard is shown to everyone with the gold amounts for each player in their “bucket”. When the event ends, rewards are given to all participants based on their standing in the leaderboard.*
 
 
-## Pre requirements
+## Pre-requirements
 ```
 Node version >= 20.6.0
 ```

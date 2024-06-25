@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { EventNotFoundException } from '../event/exceptions/event-not-found.exception';
 import { ReportService } from '../report/report.service';
 import { RewardOptionsDto } from './dto/reward-options.dto';
 import { UserDto } from '../user/dto/user.dto';
@@ -9,6 +8,7 @@ import { EventStatusEnum } from '../../constants';
 import { EventNotFinishedException } from '../event/exceptions/event-not-finished.exception';
 import { BucketService } from '../bucket/bucket.service';
 import { UserService } from '../user/user.service';
+import { ReportNotFoundException } from '../report/exceptions/report-not-found.exception';
 
 @Injectable()
 export class RewardService {
@@ -46,16 +46,16 @@ export class RewardService {
       }
     });
 
-    const reportEntity = await this.reportService.getByEventId(
+    const report = await this.reportService.getByEventId(
       rewardOptionsDto,
       userDto,
     );
 
-    if (!reportEntity) {
-      throw new EventNotFoundException();
+    if (!report) {
+      throw new ReportNotFoundException();
     }
 
-    return new ReportDto(reportEntity, { reward: 200 - (scoreIndex + 1) });
+    return new ReportDto(report, { reward: 200 - (scoreIndex + 1) });
   }
 
   async claimReward(

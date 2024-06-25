@@ -39,7 +39,7 @@ export class AuthController {
   ): Promise<void> {
     const tokenDto = await this.authService.validate(req.user as AuthUserDto);
 
-    const ONE_DAY = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const ONE_DAY = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     res
       .cookie('access_token', tokenDto.token, {

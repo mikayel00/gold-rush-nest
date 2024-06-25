@@ -27,7 +27,7 @@ export class BucketController {
     description: 'Get leaderboard by bucketId',
   })
   @ApiOperation({
-    summary: 'Get leaderboard by bucketId in bucket object',
+    summary: 'Get leaderboard by bucketId with bucket data',
   })
   getLeaderboard(@Param('id') id: string): Promise<BucketDocument> {
     return this.bucketService.getLeaderboard(id);

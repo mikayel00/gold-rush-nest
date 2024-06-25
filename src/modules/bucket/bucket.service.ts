@@ -5,38 +5,37 @@ import { Bucket, BucketDocument } from './schemas/bucket.schema';
 import { UserDocument } from '../user/user.schema';
 import { UserTypeEnum } from '../../constants';
 import { ReportDocument } from '../report/report.schema';
-import { EventService } from '../event/event.service';
 import { EventDocument } from '../event/event.schema';
 import { BucketOptionsDto } from './dto/bucket-options.dto';
 import { UserDto } from '../user/dto/user.dto';
 import { BucketNotFoundException } from './exceptions/bucket-not-found.exception';
+import { CreateBucketDto } from './dto/create-bucket.dto';
 
 @Injectable()
 export class BucketService {
   constructor(
     @InjectModel(Bucket.name)
     private readonly bucketModel: Model<BucketDocument>,
-    private readonly eventService: EventService,
   ) {}
 
-  async create(event: EventDocument): Promise<BucketDocument> {
-    const createdBucket = new this.bucketModel({ eventId: event.id });
+  async create(createBucketDto: CreateBucketDto): Promise<BucketDocument> {
+    const createdBucket = new this.bucketModel(createBucketDto);
     await createdBucket.save();
 
     return createdBucket;
   }
 
   async getAvailable(
-    eventDto: EventDocument,
+    event: EventDocument,
     user: UserDocument,
   ): Promise<BucketDocument | null> {
     const buckets = await this.bucketModel
-      .find({ eventId: eventDto.id })
+      .find({ eventId: event.id })
       .sort({ createdAt: 'asc' })
       .exec();
 
     if (!buckets.length) {
-      const bucket = await this.create(eventDto);
+      const bucket = await this.create({ eventId: event.id });
       await this.joinToBucket(bucket, user);
 
       return bucket;
@@ -53,29 +52,29 @@ export class BucketService {
       }
     }
 
-    const bucket = await this.create(eventDto);
+    const bucket = await this.create({ eventId: event.id });
     await this.joinToBucket(bucket, user);
 
     return bucket;
   }
 
   async getLeaderboard(id: string): Promise<BucketDocument> {
-    const buckets = await this.bucketModel
+    const bucket = await this.bucketModel
       .findById(id)
       .populate('scores')
       .exec();
 
-    if (!buckets) {
+    if (!bucket) {
       throw new BucketNotFoundException();
     }
 
-    buckets.scores
+    bucket.scores
       .sort((a, b) => {
         return b.score - a.score;
       })
       .map((score, index) => (score.place = index + 1));
 
-    return buckets;
+    return bucket;
   }
 
   async getCurrent(
@@ -115,15 +114,14 @@ export class BucketService {
   async addReportToBucket(
     bucket: BucketDocument,
     report: ReportDocument,
+    event: EventDocument,
   ): Promise<void> {
     if (bucket.scores.includes(report.id)) return;
 
     bucket.scores.push(report.id);
     await bucket.save();
 
-    const event = await this.eventService.getById(bucket.eventId);
     event.scores.push(report.id);
-
     await event.save();
   }
 
